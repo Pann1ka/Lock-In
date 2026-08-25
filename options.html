@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Lock In Assistant — Settings</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #f4f5f7;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      padding: 32px 16px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 560px;
+      background: #ffffff;
+      border-radius: 10px;
+      border: 1px solid #e9ecef;
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 18px 24px;
+      border-bottom: 1px solid #e9ecef;
+      background: #f8f9fa;
+    }
+
+    .header h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .header p {
+      font-size: 12px;
+      color: #888;
+      margin-top: 2px;
+    }
+
+    section {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e9ecef;
+    }
+
+    section:last-child {
+      border-bottom: none;
+    }
+
+    section h2 {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 4px;
+    }
+
+    section .desc {
+      font-size: 12px;
+      color: #888;
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    /* Add site form */
+    .add-site-form {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+
+    #site-input {
+      flex: 1;
+      padding: 9px 12px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #site-input:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+    }
+
+    #site-input.invalid {
+      border-color: #dc3545;
+    }
+
+    #add-site-btn {
+      padding: 9px 16px;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    #add-site-btn:hover {
+      background: #357abd;
+    }
+
+    #site-error {
+      font-size: 11px;
+      color: #dc3545;
+      margin-top: -8px;
+      margin-bottom: 10px;
+      display: none;
+    }
+
+    /* Preset chips */
+    .presets {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .preset-chip {
+      padding: 5px 10px;
+      background: #f0f4f9;
+      border: 1px solid #dbe4ee;
+      border-radius: 14px;
+      font-size: 11px;
+      color: #4a90e2;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .preset-chip:hover {
+      background: #e2ecf7;
+    }
+
+    /* Site list */
+    #site-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .site-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .site-row .site-domain {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .site-row .remove-btn {
+      background: none;
+      border: none;
+      color: #dc3545;
+      font-size: 15px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: background 0.2s;
+    }
+
+    .site-row .remove-btn:hover {
+      background: #fbe4e6;
+    }
+
+    #empty-state {
+      font-size: 12px;
+      color: #aaa;
+      text-align: center;
+      padding: 14px 0;
+    }
+
+    /* Toggle switch */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+    }
+
+    .toggle-row:not(:last-child) {
+      border-bottom: 1px solid #f0f1f3;
+    }
+
+    .toggle-label {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .toggle-label .title {
+      font-size: 13px;
+      font-weight: 500;
+      color: #333;
+    }
+
+    .toggle-label .subtitle {
+      font-size: 11px;
+      color: #888;
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 40px;
+      height: 22px;
+      flex-shrink: 0;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background-color: #ccc;
+      border-radius: 22px;
+      transition: 0.2s;
+    }
+
+    .slider::before {
+      position: absolute;
+      content: '';
+      height: 16px;
+      width: 16px;
+      left: 3px;
+      bottom: 3px;
+      background-color: white;
+      border-radius: 50%;
+      transition: 0.2s;
+    }
+
+    input:checked + .slider {
+      background-color: #4a90e2;
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(18px);
+    }
+
+    /* Save toast */
+    #save-toast {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #333;
+      color: white;
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 12px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s, transform 0.2s;
+    }
+
+    #save-toast.visible {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .number-input {
+      width: 70px;
+      padding: 6px 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 12px;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Lock In Assistant</h1>
+      <p>Blocking and focus session settings</p>
+    </div>
+
+    <section>
+      <h2>Blocked sites list</h2>
+      <div class="desc">Sites in this list will be marked as blocked during a focus session.</div>
+
+      <div class="add-site-form">
+        <input type="text" id="site-input" placeholder="e.g. instagram.com">
+        <button id="add-site-btn">Add</button>
+      </div>
+      <div id="site-error">Enter a valid domain (e.g. example.com)</div>
+
+      <div class="presets" id="presets"></div>
+
+      <div id="site-list"></div>
+      <div id="empty-state">The list is empty — add sites above</div>
+    </section>
+
+    <section>
+      <h2>YouTube Shorts</h2>
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span class="title">Block YouTube Shorts during focus</span>
+          <span class="subtitle">All Shorts are blocked entirely, without checking against the session goal (only while a session is active)</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="block-shorts-permanent">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </section>
+
+    <section>
+      <h2>Additional</h2>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span class="title">Strict mode</span>
+          <span class="subtitle">The list can't be edited and the session can't be ended early</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="strict-mode">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span class="title">Show notifications</span>
+          <span class="subtitle">Reminder when trying to visit a blocked site</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="show-notifications">
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div class="toggle-row">
+        <div class="toggle-label">
+          <span class="title">Cooldown between sessions</span>
+          <span class="subtitle">Min. break before a new session can start, to avoid spamming</span>
+        </div>
+        <input type="number" class="number-input" id="cooldown-minutes" min="0" max="60" placeholder="0">
+      </div>
+    </section>
+  </div>
+
+  <div id="save-toast">Saved</div>
+
+  <script src="options.js"></script>
+</body>
+</html>

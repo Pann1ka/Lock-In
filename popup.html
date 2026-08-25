@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      width: 350px;
+      max-height: 480px;
+      display: flex;
+      flex-direction: column;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .header {
+      padding: 10px 14px;
+      border-bottom: 1px solid #e9ecef;
+      background: #f8f9fa;
+    }
+
+    h3 {
+      color: #333;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    .view {
+      display: none;
+      flex-direction: column;
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .view.active {
+      display: flex;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .icon-btn {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #4a90e2;
+      color: white;
+      border: none;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .icon-btn:hover {
+      background: #357abd;
+    }
+
+    .icon-btn.secondary {
+      background: #6c757d;
+    }
+
+    .icon-btn.secondary:hover {
+      background: #565e64;
+    }
+
+    .goal-body {
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .field-block label {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 12px;
+      color: #666;
+      font-weight: 500;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    #goal-select {
+      width: 100%;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding: 8px 32px 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #333;
+      background: #ffffff;
+      cursor: pointer;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #goal-select:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+    }
+
+    .select-wrapper::after {
+      content: '';
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      width: 6px;
+      height: 6px;
+      border-right: 2px solid #888;
+      border-bottom: 2px solid #888;
+      transform: translateY(-70%) rotate(45deg);
+      pointer-events: none;
+    }
+
+    #goal-custom-input {
+      width: 100%;
+      margin-top: 8px;
+      padding: 8px 10px;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    #goal-custom-input:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+    }
+
+    #goal-custom-input.hidden {
+      display: none;
+    }
+
+    .time-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    #time-input {
+      flex: 1;
+      padding: 6px 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 13px;
+      outline: none;
+    }
+
+    #time-input:focus {
+      border-color: #4a90e2;
+      box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.1);
+    }
+
+    #time-input.invalid {
+      border-color: #dc3545;
+    }
+
+    .time-hint {
+      font-size: 11px;
+      color: #999;
+    }
+
+    .input-section {
+      padding: 12px 14px;
+      border-top: 1px solid #e9ecef;
+      background: #f8f9fa;
+    }
+
+    #start-btn {
+      width: 100%;
+      padding: 10px;
+      background: #28a745;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    #start-btn:hover:not(:disabled) {
+      background: #218838;
+    }
+
+    #start-btn:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+  </style>
+</head>
+<body>
+  <div id="login-view" class="view active">
+    <div class="header">
+      <h3>Welcome</h3>
+    </div>
+
+    <div style="
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      padding: 20px;
+    ">
+      <div style="font-size: 14px; font-weight: 500; color: #333; text-align: center;">
+        Sign in to continue
+      </div>
+
+      <button id="google-login-btn"
+        style="
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          padding: 10px 16px;
+          background: #ffffff;
+          border: 1px solid #ddd;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 500;
+          cursor: pointer;
+        ">
+        <img src="assets/google.png" alt="Google Logo" style="width: 18px; height: 18px;">
+        Continue with Google
+      </button>
+
+      <div id="asdasd" style="font-size: 11px; color: #999; text-align: center;">
+        We do not store your password
+      </div>
+    </div>
+  </div>
+
+  <div id="main-view" class="view">
+    <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h3>Lock In</h3>
+      <div class="header-actions">
+        <button id="settings-btn" class="icon-btn secondary" title="Настройки">⚙️</button>
+      </div>
+    </div>
+
+    <div class="goal-body">
+      <div class="field-block">
+        <label for="goal-select">Goal for Lock In Session</label>
+        <div class="select-wrapper">
+          <select id="goal-select">
+            <option value="" selected disabled>Choose the goal...</option>
+            <option value="learn programming">Learn programming</option>
+            <option value="learn mathematics">Learn mathematics</option>
+            <option value="learn english">Learn english</option>
+            <option value="custom">✏️ Custom option</option>
+          </select>
+        </div>
+        <input type="text" id="goal-custom-input" class="hidden" placeholder="Опиши свою цель...">
+      </div>
+    </div>
+
+    <div class="input-section">
+      <div class="field-block" style="margin-bottom: 10px;">
+        <label for="time-input">Lock In Duration (minutes)</label>
+        <div class="time-input-wrapper">
+          <input type="number" id="time-input" placeholder="30" min="1" max="480">
+          <span class="time-hint">1-480 min</span>
+        </div>
+      </div>
+
+      <button id="start-btn" disabled>Start Lock In Session</button>
+    </div>
+  </div>
+
+  <div id="focus-view" class="view">
+    <div class="header" style="display: flex; justify-content: space-between; align-items: center;">
+      <h3 style="font-size: 14px;">Lock In Session</h3>
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 12px 14px; gap: 10px; overflow-y: auto;">
+      <div style="text-align: center; margin-bottom: 2px;">
+        <div id="remaining-time" style="font-size: 26px; font-weight: 600; line-height: 1.2;">
+          25 minutes
+        </div>
+        <div style="font-size: 12px; color: #666;">
+          Time remaining
+        </div>
+      </div>
+
+      <!-- Check Site Section -->
+      <div style="width: 100%; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 10px; display: flex; flex-direction: column; gap: 8px;">
+        <div style="font-size: 12px; font-weight: 600; color: #333;">Check Site</div>
+
+        <input id="check-site-input" type="hidden">
+
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <div id="current-url-label"
+            style="flex: 1; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px;
+                   font-size: 11px; color: #555; background: #fff; overflow: hidden;
+                   text-overflow: ellipsis; white-space: nowrap;">
+            Loading URL…
+          </div>
+          <button id="check-site-btn"
+            style="padding: 6px 10px; background: #4a90e2; color: white; border: none; border-radius: 4px; font-size: 11px; font-weight: 500; cursor: pointer; white-space: nowrap;">
+            View
+          </button>
+        </div>
+
+        <div id="check-site-result" style="display: none; padding: 6px; border-radius: 4px; font-size: 12px; font-weight: 600; text-align: center;"></div>
+      </div>
+
+      <button id="cancel-btn"
+        style="
+          width: 100%;
+          padding: 8px 16px;
+          background: #dc3545;
+          color: white;
+          border: none;
+          border-radius: 6px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          margin-top: auto;
+        ">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
