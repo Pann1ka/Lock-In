@@ -18,6 +18,8 @@ For the most efficiency, formulate goals in custom option in a form "learn *X*",
 Do not write too specific subjects
 The options are not limited to the programming, math and english. See the list of goals the model learned at the bottom
 
+https://github.com/user-attachments/assets/42377d43-b102-41df-8174-cbf1da902fc5
+
 ## 🚀 Installation
 
 1. Clone the repository:
